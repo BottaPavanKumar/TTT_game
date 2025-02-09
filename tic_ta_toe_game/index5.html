@@ -1,0 +1,136 @@
+<html>
+<head>
+<title>How to Code Tic Tac Toe Game in jQuery</title>
+</head>
+<style>
+body {
+    max-width:550px;
+}
+.tile-container {
+	width: 180px;
+    overflow: inherit;
+}
+
+.tile {
+	height: 50px;
+	width: 50px;
+	margin: 5px;
+	float: left;
+	background-color: #80dec5;
+}
+.x-mark{
+  background: green;
+}
+.o-mark{
+  background: blue;
+}
+/* .x-mark {
+	background: #FFF url("https://phppot.com/demo/how-to-code-tic-tac-toe-game-in-jquery/image/icon-x.png");
+}
+
+.o-mark {
+	background: #FFF url("https://phppot.com/demo/how-to-code-tic-tac-toe-game-in-jquery/image/icon-o.png");
+} */
+
+div#game-result {
+    clear: both;
+    margin-top: 20px;
+    padding: 10px;
+    display:none;
+    background: none;
+}
+div#game-result.win {
+    background: #7fdec5;
+}
+
+div#game-result.lost {
+    background: #ffc433
+}
+.reset {
+    cursor:pointer;
+    text-decoration: underline;
+}
+</style>
+<body>
+    <!-- <script type="text/javascript" src="jquery/jquery-3.2.1.min.js"></script> -->
+      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+    <div class="tile-container">
+        <div class="tile" id="tile-1" data-position="1"></div>
+        <div class="tile" id="tile-2" data-position="2"></div>
+        <div class="tile" id="tile-3" data-position="3"></div>
+        <div class="tile" id="tile-4" data-position="4"></div>
+        <div class="tile" id="tile-5" data-position="5"></div>
+        <div class="tile" id="tile-6" data-position="6"></div>
+        <div class="tile" id="tile-7" data-position="7"></div>
+        <div class="tile" id="tile-8" data-position="8"></div>
+        <div class="tile" id="tile-9" data-position="9"></div>
+    </div>
+    <div id="game-result"></div>
+    <script>
+    function computerTurn() {
+       var choose = $(".tile:not(.marked)");
+         randChoice = choose[Math.floor(Math.random() * choose.length)];
+         $(randChoice).addClass('marked');
+         $(randChoice).addClass('o-mark');
+         trackTicTac(randChoice,'o-mark');
+    }
+
+    function resetTicTacToe() {
+            $(".tile").removeClass("marked");
+            $(".tile").removeClass("o-mark");
+            $(".tile").removeClass("x-mark");
+            $("#game-result").hide();
+            $("#game-result").html("");
+            $("#game-result").removeClass("win");
+            $("#game-result").removeClass("lost");
+            finished = false;
+    }
+
+    function trackTicTac(obj,mark) {
+        var winning_probability = [ [1, 5, 9]];
+
+        var markedPosition = $(obj).data("position");
+        $.each(winning_probability, function(key, winning_probability_index) {
+            if($.inArray(markedPosition, winning_probability_index) >= 0) {
+                markedLength = 0;
+                $.each(winning_probability_index, function(index,value) {
+                var innerSquareClass = $("#tile-"+value).attr("class");
+                if(innerSquareClass.indexOf(mark)>0) {
+                       markedLength = markedLength+1;
+                       if(markedLength == winning_probability_index.length) {
+                           finished = true;
+                           if(mark == "x-mark") {
+                               status = " You Win!";
+                               className = "win";
+                           } else {
+                        	       status = " You Lost!";
+                        	       className = "lost";
+                           }
+                           $("#game-result").show();
+                           $("#game-result").html("Game Over."+status + " <span class='reset' onclick='resetTicTacToe();'>Reset to play again</span>.");
+                           $("#game-result").addClass(className);
+                    }
+                   }
+                });
+             }
+        });
+        return finished;
+    }
+
+    $(document).ready(function() {
+        finished = false;
+        $(".tile").on('click', function() {
+            if(!finished) {
+                var squareClass = $(this).attr("class");
+            	    if(squareClass.indexOf("marked")<0) {
+                    $(this).addClass('marked');
+                    $(this).addClass('x-mark');
+                    finished = trackTicTac(this,'x-mark');
+                    computerTurn();
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>
